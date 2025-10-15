@@ -1,10 +1,9 @@
-
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
 
 # YouTube API Key
-API_KEY = "AIzaSyBwLEIP3GURhx7mEdFcOzb-TS4hv7XiLBI"
+API_KEY = "AIzaSyBwLEIP3GURhx7mEdFcOzb-TS4hv7XiLBI" # Remember to keep your API key private
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos"
 YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels"
@@ -15,17 +14,16 @@ st.title("YouTube Viral Topics Tool")
 # Input Fields
 days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30, value=5)
 
-# List of broader keywords
+# List of broader keywords (with syntax corrected)
 keywords = [
-"unsolved mysteries", "Reddit Update", "history's missing persons", "ancient civilizations documentary", 
-"history of ancient Rome", "weird history", "bizarre historical events", "Women Who Built America", "Engineering marvels of ancient Rome", 
-"Daily life in ancient Egypt", "Lost cities of the Maya civilization", "The real reason the Library of Alexandria burned", "World War 2 documentary", 
-"Unexplained battlefield phenomena", "The most elite special forces in history", " The real story of Cleopatra", 
-"Unsolved historical disappearances", "The lost treasure of the Knights Templar", "The Industrial Revolution explained", 
-"The Space Race documentary", "Hidden Scientific Geniuses", "America's First Serial Killers", "The history of gladiators", 
-"The Viking Age documentary"
+    "unsolved mysteries", "Reddit Update", "history's missing persons", "ancient civilizations documentary",
+    "history of ancient Rome", "weird history", "bizarre historical events", "Women Who Built America", "Engineering marvels of ancient Rome",
+    "Daily life in ancient Egypt", "Lost cities of the Maya civilization", "The real reason the Library of Alexandria burned", "World War 2 documentary",
+    "Unexplained battlefield phenomena", "The most elite special forces in history", " The real story of Cleopatra",
+    "Unsolved historical disappearances", "The lost treasure of the Knights Templar", "The Industrial Revolution explained",
+    "The Space Race documentary", "Hidden Scientific Geniuses", "America's First Serial Killers", "The history of gladiators",
+    "The Viking Age documentary"
 ]
-
 
 # Fetch Data Button
 if st.button("Fetch Data"):
@@ -47,6 +45,7 @@ if st.button("Fetch Data"):
                 "publishedAfter": start_date,
                 "maxResults": 5,
                 "key": API_KEY,
+                "videoDuration": "long"  # <-- THIS LINE FILTERS FOR VIDEOS > 20 MINS
             }
 
             # Fetch video data
@@ -55,7 +54,7 @@ if st.button("Fetch Data"):
 
             # Check if "items" key exists
             if "items" not in data or not data["items"]:
-                st.warning(f"No videos found for keyword: {keyword}")
+                st.warning(f"No long videos found for keyword: {keyword}")
                 continue
 
             videos = data["items"]
