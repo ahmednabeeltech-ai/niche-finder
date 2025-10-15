@@ -1,3 +1,4 @@
+
 import streamlit as st
 import requests
 from datetime import datetime, timedelta
@@ -21,7 +22,8 @@ keywords = [
 "Daily life in ancient Egypt", Lost cities of the Maya civilization", "The real reason the Library of Alexandria burned", "World War 2 documentary", 
 "Unexplained battlefield phenomena", "The most elite special forces in history", " The real story of Cleopatra", 
 "Unsolved historical disappearances", "The lost treasure of the Knights Templar", "The Industrial Revolution explained", 
-"The Space Race documentary"
+"The Space Race documentary", "Hidden Scientific Geniuses", "America's First Serial Killers", "The history of gladiators", 
+"The Viking Age documentary"
 ]
 
 # Fetch Data Button
@@ -118,3 +120,4 @@ if st.button("Fetch Data"):
 
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
