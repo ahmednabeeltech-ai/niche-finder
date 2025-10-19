@@ -14,16 +14,51 @@ st.title("YouTube Viral Topics Tool")
 # Input Fields
 days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30, value=5)
 
-# List of broader keywords
+# --- KEYWORDS UPDATED AS REQUESTED ---
 keywords = [
-    "unsolved mysteries", "Reddit Update", "history's missing persons", "ancient civilizations documentary",
-    "history of ancient Rome", "weird history", "bizarre historical events", "Women Who Built America", "Engineering marvels of ancient Rome",
-    "Daily life in ancient Egypt", "Lost cities of the Maya civilization", "The real reason the Library of Alexandria burned", "World War 2 documentary",
-    "Unexplained battlefield phenomena", "The most elite special forces in history", " The real story of Cleopatra",
-    "Unsolved historical disappearances", "The lost treasure of the Knights Templar", "The Industrial Revolution explained",
-    "The Space Race documentary", "Hidden Scientific Geniuses", "America's First Serial Killers", "The history of gladiators",
-    "The Viking Age documentary"
+    # Historical Enigmas
+    "what happened to the lost colony of roanoke",
+    "dyatlov pass incident explained",
+    "antikythera mechanism explained",
+    "gobekli tepe documentary",
+    "the voynich manuscript",
+    "oak island money pit",
+    "atlantis documentary",
+    "ancient mysteries documentary",
+    # Unsolved Crimes
+    "jack the ripper documentary",
+    "who was db cooper",
+    "zodiac killer documentary",
+    "elisa lam case explained",
+    "black dahlia unsolved",
+    "jonbenet ramsey theories",
+    "madeleine mccann documentary",
+    "unsolved disappearances",
+    # Cryptids & Paranormal
+    "skinwalker ranch stories",
+    "mothman documentary",
+    "bigfoot documentary",
+    "loch ness monster evidence",
+    "real ghost stories",
+    "paranormal stories",
+    "mysteries of the bermuda triangle",
+    "unexplained paranormal phenomena",
+    # Conspiracy Theories
+    "jfk assassination theory",
+    "moon landing conspiracy",
+    "area 51 documentary",
+    "roswell incident explained",
+    "illuminati documentary",
+    "new world order explained",
+    "chemtrails theory",
+    "flat earth documentary",
+    "mandela effect examples",
+    "simulation theory documentary",
+    # Weird History
+    "weird history facts",
+    "medieval torture devices"
 ]
+
 
 # Fetch Data Button
 if st.button("Fetch Data"):
@@ -40,7 +75,7 @@ if st.button("Fetch Data"):
                 "type": "video",
                 "order": "viewCount",
                 "publishedAfter": start_date,
-                "maxResults": 5, # You can increase this to get more results per keyword
+                "maxResults": 5,
                 "key": API_KEY,
                 "videoDuration": "long"
             }
@@ -55,16 +90,14 @@ if st.button("Fetch Data"):
             videos = data["items"]
             video_ids = [video["id"]["videoId"] for video in videos]
             
-            # --- START OF MODIFIED LOGIC ---
-
-            # 1. Get a unique set of channel IDs to avoid duplicate API calls
+            # Get a unique set of channel IDs to avoid duplicate API calls
             channel_ids = list(set([video["snippet"]["channelId"] for video in videos]))
 
             if not video_ids or not channel_ids:
                 st.warning(f"Skipping keyword: {keyword} due to missing data.")
                 continue
 
-            # 2. Fetch stats for all unique channels in a single API call
+            # Fetch stats for all unique channels in a single API call
             channel_params = {"part": "statistics", "id": ",".join(channel_ids), "key": API_KEY}
             channel_response = requests.get(YOUTUBE_CHANNEL_URL, params=channel_params)
             channel_data = channel_response.json()
@@ -73,13 +106,11 @@ if st.button("Fetch Data"):
                 st.warning(f"Could not fetch channel data for keyword: {keyword}")
                 continue
             
-            # 3. Create a subscriber lookup dictionary {channel_id: subscriber_count}
+            # Create a subscriber lookup dictionary {channel_id: subscriber_count}
             channel_subs_map = {
                 channel["id"]: int(channel["statistics"].get("subscriberCount", 0))
                 for channel in channel_data.get("items", [])
             }
-
-            # --- END OF MODIFIED LOGIC ---
 
             stats_params = {"part": "statistics", "id": ",".join(video_ids), "key": API_KEY}
             stats_response = requests.get(YOUTUBE_VIDEO_URL, params=stats_params)
@@ -96,7 +127,7 @@ if st.button("Fetch Data"):
                 if video_id in video_details:
                     snippet = video_details[video_id]
                     
-                    # 4. Use the map to get the correct subscriber count
+                    # Use the map to get the correct subscriber count
                     channel_id = snippet["channelId"]
                     subs = channel_subs_map.get(channel_id, 0) # Default to 0 if not found
 
