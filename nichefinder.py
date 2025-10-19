@@ -16,13 +16,8 @@ days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30
 
 # --- KEYWORDS UPDATED AS REQUESTED ---
 keywords = [
-    "what happened to the lost colony of roanoke",
-    "dyatlov pass incident explained",
-    "antikythera mechanism explained",
-    "gobekli tepe documentary",
-    "the voynich manuscript",
-    "oak island money pit",
-    "atlantis documentary",
+    "what happened to the lost colony of roanoke", "dyatlov pass incident explained", "antikythera mechanism explained", "gobekli tepe documentary",
+    "the voynich manuscript", "oak island money pit", "atlantis documentary",
     "ancient mysteries documentary",
     "jack the ripper documentary",
     "who was db cooper",
