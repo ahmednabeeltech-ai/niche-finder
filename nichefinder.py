@@ -14,7 +14,7 @@ st.title("YouTube Viral Topics Tool")
 # Input Fields
 days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30, value=5)
 
-# List of broader keywords (with syntax corrected)
+# List of broader keywords
 keywords = [
     "unsolved mysteries", "Reddit Update", "history's missing persons", "ancient civilizations documentary",
     "history of ancient Rome", "weird history", "bizarre historical events", "Women Who Built America", "Engineering marvels of ancient Rome",
@@ -28,91 +28,98 @@ keywords = [
 # Fetch Data Button
 if st.button("Fetch Data"):
     try:
-        # Calculate date range
         start_date = (datetime.utcnow() - timedelta(days=int(days))).isoformat("T") + "Z"
         all_results = []
 
-        # Iterate over the list of keywords
         for keyword in keywords:
             st.write(f"Searching for keyword: {keyword}")
 
-            # Define search parameters
             search_params = {
                 "part": "snippet",
                 "q": keyword,
                 "type": "video",
                 "order": "viewCount",
                 "publishedAfter": start_date,
-                "maxResults": 5,
+                "maxResults": 5, # You can increase this to get more results per keyword
                 "key": API_KEY,
-                "videoDuration": "long"  # <-- THIS LINE FILTERS FOR VIDEOS > 20 MINS
+                "videoDuration": "long"
             }
 
-            # Fetch video data
             response = requests.get(YOUTUBE_SEARCH_URL, params=search_params)
             data = response.json()
 
-            # Check if "items" key exists
             if "items" not in data or not data["items"]:
                 st.warning(f"No long videos found for keyword: {keyword}")
                 continue
 
             videos = data["items"]
-            video_ids = [video["id"]["videoId"] for video in videos if "id" in video and "videoId" in video["id"]]
-            channel_ids = [video["snippet"]["channelId"] for video in videos if "snippet" in video and "channelId" in video["snippet"]]
+            video_ids = [video["id"]["videoId"] for video in videos]
+            
+            # --- START OF MODIFIED LOGIC ---
+
+            # 1. Get a unique set of channel IDs to avoid duplicate API calls
+            channel_ids = list(set([video["snippet"]["channelId"] for video in videos]))
 
             if not video_ids or not channel_ids:
-                st.warning(f"Skipping keyword: {keyword} due to missing video/channel data.")
+                st.warning(f"Skipping keyword: {keyword} due to missing data.")
                 continue
 
-            # Fetch video statistics
-            stats_params = {"part": "statistics", "id": ",".join(video_ids), "key": API_KEY}
-            stats_response = requests.get(YOUTUBE_VIDEO_URL, params=stats_params)
-            stats_data = stats_response.json()
-
-            if "items" not in stats_data or not stats_data["items"]:
-                st.warning(f"Failed to fetch video statistics for keyword: {keyword}")
-                continue
-
-            # Fetch channel statistics
+            # 2. Fetch stats for all unique channels in a single API call
             channel_params = {"part": "statistics", "id": ",".join(channel_ids), "key": API_KEY}
             channel_response = requests.get(YOUTUBE_CHANNEL_URL, params=channel_params)
             channel_data = channel_response.json()
 
-            if "items" not in channel_data or not channel_data["items"]:
-                st.warning(f"Failed to fetch channel statistics for keyword: {keyword}")
+            if "items" not in channel_data:
+                st.warning(f"Could not fetch channel data for keyword: {keyword}")
                 continue
+            
+            # 3. Create a subscriber lookup dictionary {channel_id: subscriber_count}
+            channel_subs_map = {
+                channel["id"]: int(channel["statistics"].get("subscriberCount", 0))
+                for channel in channel_data.get("items", [])
+            }
 
-            stats = stats_data["items"]
-            channels = channel_data["items"]
+            # --- END OF MODIFIED LOGIC ---
 
-            # Collect results
-            for video, stat, channel in zip(videos, stats, channels):
-                title = video["snippet"].get("title", "N/A")
-                description = video["snippet"].get("description", "")[:200]
-                video_url = f"https://www.youtube.com/watch?v={video['id']['videoId']}"
-                views = int(stat["statistics"].get("viewCount", 0))
-                subs = int(channel["statistics"].get("subscriberCount", 0))
+            stats_params = {"part": "statistics", "id": ",".join(video_ids), "key": API_KEY}
+            stats_response = requests.get(YOUTUBE_VIDEO_URL, params=stats_params)
+            stats_data = stats_response.json()
+            stats = stats_data.get("items", [])
 
-                if subs < 3000:  # Only include channels with fewer than 3,000 subscribers
-                    all_results.append({
-                        "Title": title,
-                        "Description": description,
-                        "URL": video_url,
-                        "Views": views,
-                        "Subscribers": subs
-                    })
+            # Combine video snippets with their corresponding stats
+            video_details = {}
+            for video in videos:
+                video_details[video["id"]["videoId"]] = video["snippet"]
+            
+            for stat in stats:
+                video_id = stat["id"]
+                if video_id in video_details:
+                    snippet = video_details[video_id]
+                    
+                    # 4. Use the map to get the correct subscriber count
+                    channel_id = snippet["channelId"]
+                    subs = channel_subs_map.get(channel_id, 0) # Default to 0 if not found
 
-        # Display results
+                    # Apply the filter
+                    if subs < 3000:
+                        all_results.append({
+                            "Title": snippet.get("title", "N/A"),
+                            "Description": snippet.get("description", "")[:200],
+                            "URL": f"https://www.youtube.com/watch?v={video_id}",
+                            "Views": int(stat["statistics"].get("viewCount", 0)),
+                            "Subscribers": subs
+                        })
+
         if all_results:
             st.success(f"Found {len(all_results)} results across all keywords!")
-            for result in all_results:
+            # Sort results by views for better visibility
+            sorted_results = sorted(all_results, key=lambda x: x['Views'], reverse=True)
+            for result in sorted_results:
                 st.markdown(
                     f"**Title:** {result['Title']}  \n"
-                    f"**Description:** {result['Description']}  \n"
+                    f"**Subscribers:** {result['Subscribers']} | **Views:** {result['Views']}  \n"
                     f"**URL:** [Watch Video]({result['URL']})  \n"
-                    f"**Views:** {result['Views']}  \n"
-                    f"**Subscribers:** {result['Subscribers']}"
+                    f"**Description:** {result['Description']}..."
                 )
                 st.write("---")
         else:
