@@ -16,49 +16,48 @@ days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30
 
 # --- KEYWORDS UPDATED AS REQUESTED ---
 keywords = [
-    # Historical Enigmas
-    "what happened to the lost colony of roanoke",
-    "dyatlov pass incident explained",
-    "antikythera mechanism explained",
-    "gobekli tepe documentary",
-    "the voynich manuscript",
-    "oak island money pit",
-    "atlantis documentary",
-    "ancient mysteries documentary",
-    # Unsolved Crimes
-    "jack the ripper documentary",
-    "who was db cooper",
-    "zodiac killer documentary",
-    "elisa lam case explained",
-    "black dahlia unsolved",
-    "jonbenet ramsey theories",
-    "madeleine mccann documentary",
-    "unsolved disappearances",
-    # Cryptids & Paranormal
-    "skinwalker ranch stories",
-    "mothman documentary",
-    "bigfoot documentary",
-    "loch ness monster evidence",
-    "real ghost stories",
-    "paranormal stories",
-    "mysteries of the bermuda triangle",
-    "unexplained paranormal phenomena",
-    # Conspiracy Theories
-    "jfk assassination theory",
-    "moon landing conspiracy",
-    "area 51 documentary",
-    "roswell incident explained",
-    "illuminati documentary",
-    "new world order explained",
-    "chemtrails theory",
-    "flat earth documentary",
-    "mandela effect examples",
-    "simulation theory documentary",
-    # Weird History
-    "weird history facts",
-    "medieval torture devices"
+    # Historical Enigmas
+    "what happened to the lost colony of roanoke",
+    "dyatlov pass incident explained",
+    "antikythera mechanism explained",
+    "gobekli tepe documentary",
+    "the voynich manuscript",
+    "oak island money pit",
+    "atlantis documentary",
+    "ancient mysteries documentary",
+    # Unsolved Crimes
+    "jack the ripper documentary",
+    "who was db cooper",
+    "zodiac killer documentary",
+    "elisa lam case explained",
+    "black dahlia unsolved",
+    "jonbenet ramsey theories",
+    "madeleine mccann documentary",
+    "unsolved disappearances",
+    # Cryptids & Paranormal
+    "skinwalker ranch stories",
+    "mothman documentary",
+    "bigfoot documentary",
+    "loch ness monster evidence",
+    "real ghost stories",
+    "paranormal stories",
+    "mysteries of the bermuda triangle",
+    "unexplained paranormal phenomena",
+    # Conspiracy Theories
+    "jfk assassination theory",
+    "moon landing conspiracy",
+    "area 51 documentary",
+    "roswell incident explained",
+    "illuminati documentary",
+    "new world order explained",
+    "chemtrails theory",
+    "flat earth documentary",
+    "mandela effect examples",
+    "simulation theory documentary",
+    # Weird History
+    "weird history facts",
+    "medieval torture devices"
 ]
-
 
 # Fetch Data Button
 if st.button("Fetch Data"):
