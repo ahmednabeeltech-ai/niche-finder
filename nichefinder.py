@@ -61,7 +61,6 @@ keywords = [
 
 # Fetch Data Button
 if st.button("Fetch Data"):
-    try:
         start_date = (datetime.utcnow() - timedelta(days=int(days))).isoformat("T") + "Z"
         all_results = []
 
